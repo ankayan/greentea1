@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>品牌介绍 - 信阳毛尖官方商城</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        :root {
+            --tea-green: #2E7D32;
+            --light-green: #81C784;
+            --white: #fff;
+            --gray: #f5f5f5;
+            --dark: #333;
+            --light-gray: #666;
+            --border-gray: #eee;
+            --red: #e53935;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background-color: var(--tea-green);
+            color: var(--white);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            margin: 0 18px;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .nav-links a:hover {
+            color: var(--light-green);
+        }
+        .nav-links a.active {
+            color: var(--light-green);
+            font-weight: bold;
+        }
+        .cart {
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            position: relative;
+        }
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--red);
+            color: var(--white);
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* 品牌介绍主体 */
+        .about-container {
+            padding: 60px 5%;
+            background-color: var(--white);
+        }
+        .about-title {
+            font-size: 28px;
+            color: var(--dark);
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        .about-title::after {
+            content: '';
+            width: 60px;
+            height: 3px;
+            background-color: var(--tea-green);
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .about-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            align-items: center;
+            margin-bottom: 60px;
+        }
+        .about-img {
+            flex: 1;
+            min-width: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+        }
+        .about-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .about-text {
+            flex: 1;
+            min-width: 300px;
+        }
+        .about-text h3 {
+            font-size: 22px;
+            color: var(--dark);
+            margin-bottom: 20px;
+        }
+        .about-text p {
+            color: var(--light-gray);
+            line-height: 1.8;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+        /* 品牌优势 */
+        .brand-advantages {
+            padding: 60px 5%;
+            background-color: var(--gray);
+        }
+        .advantage-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .advantage-item {
+            text-align: center;
+            padding: 25px;
+            background-color: var(--white);
+            border-radius: 10px;
+            transition: 0.3s;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        }
+        .advantage-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        .advantage-icon {
+            font-size: 40px;
+            color: var(--tea-green);
+            margin-bottom: 15px;
+        }
+        .advantage-item h4 {
+            font-size: 18px;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+        .advantage-item p {
+            color: var(--light-gray);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        /* 品牌历史 */
+        .brand-history {
+            padding: 60px 5%;
+            background-color: var(--white);
+        }
+        .history-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            color: var(--light-gray);
+            line-height: 1.8;
+            font-size: 15px;
+        }
+        .history-content h3 {
+            font-size: 22px;
+            color: var(--dark);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .history-timeline {
+            position: relative;
+            margin: 40px 0;
+            padding-left: 30px;
+        }
+        .history-timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: var(--tea-green);
+            border-radius: 2px;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding-left: 20px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -33px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--tea-green);
+            border: 2px solid var(--white);
+            box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
+        }
+        .timeline-item h4 {
+            color: var(--dark);
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        /* 底部样式 */
+        .footer {
+            background-color: var(--tea-green);
+            color: var(--white);
+            text-align: center;
+            padding: 30px 5%;
+        }
+        .footer p {
+            margin-bottom: 10px;
+        }
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .about-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏（与所有页面互通） -->
+    <div class="navbar">
+        <div class="logo">信阳毛尖</div>
+        <div class="nav-links">
+           <a href="首页.html" >首页</a>
+            <a href="详情.html" >商品详情</a>
+            <a href="品牌介绍.html" class="active">品牌介绍</a>
+            <a href="联系我们.html">联系我们</a>
+            <a href="购物车.html">购物车</a>
+        </div>
+        <div class="cart" onclick="location.href='购物车.html'">
+            🛒 购物车
+            <span class="cart-badge" id="cartBadge">0</span>
+        </div>
+    </div>
+
+    <!-- 品牌介绍主体 -->
+    <section class="about-container">
+        <h2 class="about-title">品牌介绍</h2>
+        <div class="about-content">
+            <div class="about-img">
+                <img src="imges/产地3.png" alt="信阳毛尖茶园风光">
+            </div>
+            <div class="about-text">
+                <h3>百年传承 正宗信阳毛尖</h3>
+                <p>信阳毛尖，中国十大名茶之一，产自河南省信阳市浉河区，始于清末，至今已有百余年历史。依托信阳独特的气候、土壤和山水环境，孕育出“细、圆、光、直、多白毫、香高、味浓、汤色绿”的独特品质，被誉为“绿茶之王”。</p>
+                <p>我们深耕信阳毛尖产业数十年，拥有自有核心茶园300余亩，坚持古法手工炒制工艺，拒绝农药化肥，从采摘、晾晒、炒制到包装，每一个环节都严格把控，只为将最鲜爽、最正宗的信阳毛尖带给每一位茶友。</p>
+                <p>多年来，我们始终秉持“品质为本、诚信经营”的理念，获得了广大茶友的认可与好评，先后荣获多项茶叶行业大奖，成为信阳毛尖产业的标杆企业。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 品牌优势 -->
+    <section class="brand-advantages">
+        <h2 class="about-title">品牌优势</h2>
+        <div class="advantage-list">
+            <div class="advantage-item">
+                <div class="advantage-icon">🌱</div>
+                <h4>核心产区直供</h4>
+                <p>自有茶园位于浉河核心产区，海拔800米以上，云雾缭绕，昼夜温差大，土壤富含矿物质，孕育优质茶叶。</p>
+            </div>
+            <div class="advantage-item">
+                <div class="advantage-icon">👐</div>
+                <h4>古法手工炒制</h4>
+                <p>传承百年手工炒制工艺，经过“摊青、杀青、揉捻、干燥”等多道工序，保留茶叶本真风味，口感醇厚鲜爽。</p>
+            </div>
+            <div class="advantage-item">
+                <div class="advantage-icon">✅</div>
+                <h4>严格品质把控</h4>
+                <p>每一批茶叶都经过人工筛选、专业检测，拒绝农残、拒绝劣质茶，假一赔十，让茶友买得放心、喝得安心。</p>
+            </div>
+            <div class="advantage-item">
+                <div class="advantage-icon">📜</div>
+                <h4>百年品牌积淀</h4>
+                <p>百年传承，匠心制茶，积累了丰富的制茶经验，坚守品质初心，成为信阳毛尖行业的知名品牌。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 品牌历史 -->
+    <section class="brand-history">
+        <h2 class="about-title">品牌历史</h2>
+        <div class="history-content">
+            <p>信阳毛尖的历史可追溯至清末，历经百年发展，从最初的小范围种植、手工制茶，逐步发展成为规模化、标准化的茶叶产业，成为信阳的一张城市名片。</p>
+            <div class="history-timeline">
+                <div class="timeline-item">
+                    <h4>清末时期（1900年前后）</h4>
+                    <p>信阳地区开始规模化种植茶树，茶农采用传统手工方式制茶，信阳毛尖初步形成独特风味，开始在周边地区流传。</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>民国时期（1915年）</h4>
+                    <p>信阳毛尖在巴拿马万国博览会上荣获金奖，从此享誉国内外，成为中国知名绿茶品种。</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>建国后（1950-1980年）</h4>
+                    <p>政府大力扶持信阳毛尖产业，扩大种植面积，改进制茶工艺，实现从手工制茶向半机械化制茶的转变，产量和品质大幅提升。</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>21世纪以来</h4>
+                    <p>我们品牌正式成立，深耕信阳毛尖产业，坚持“品质为本”，整合核心产区资源，打造从茶园到餐桌的一站式服务，成为行业标杆。</p>
+                </div>
+            </div>
+            <p>百年风雨，匠心不改。我们始终坚守制茶初心，传承古法工艺，创新发展模式，让更多人了解信阳毛尖、喜爱信阳毛尖，将这一传统名茶发扬光大。</p>
+        </div>
+    </section>
+
+    <!-- 底部（与所有页面统一） -->
+    <div class="footer">
+        <p>信阳毛尖官方商城 © 2025 版权所有</p>
+        <p>地址：河南省信阳市浉河区茶叶核心产区</p>
+        <p>服务热线：400-123-4567  |  联系邮箱：service@xinyangmaojian.com</p>
+        <p>ICP备案号：豫ICP备XXXXXXXX号-1</p>
+    </div>
+
+    <!-- 购物车数量联动JS -->
+    <script>
+        // 购物车数量联动（与商品详情页、购物车页同步）
+        const cartBadge = document.getElementById('cartBadge');
+
+        // 初始化购物车数量
+        function updateCartBadge() {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cartBadge.textContent = cart.length;
+        }
+        updateCartBadge();
+		 // 页面加载时初始化购物车
+        window.onload = initCart;
+    </script>
+</body>
+</html>

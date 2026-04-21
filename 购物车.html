@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>购物车 - 信阳毛尖官方商城</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        :root {
+            --tea-green: #2E7D32;
+            --light-green: #81C784;
+            --white: #fff;
+            --gray: #f5f5f5;
+            --dark: #333;
+            --light-gray: #666;
+            --border-gray: #eee;
+            --red: #e53935;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background-color: var(--tea-green);
+            color: var(--white);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            margin: 0 18px;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .nav-links a:hover {
+            color: var(--light-green);
+        }
+        .nav-links a.active {
+            color: var(--light-green);
+            font-weight: bold;
+        }
+        .cart {
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            position: relative;
+        }
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--red);
+            color: var(--white);
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* 购物车主页 */
+        .cart-container {
+            padding: 60px 5%;
+            background-color: var(--white);
+            min-height: calc(100vh - 190px);
+        }
+        .cart-title {
+            font-size: 28px;
+            color: var(--dark);
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        .cart-title::after {
+            content: '';
+            width: 60px;
+            height: 3px;
+            background-color: var(--tea-green);
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        /* 空购物车 */
+        .empty-cart {
+            text-align: center;
+            padding: 60px 0;
+            color: var(--light-gray);
+            display: block;
+        }
+        .empty-cart i {
+            font-size: 80px;
+            color: var(--border-gray);
+            margin-bottom: 20px;
+        }
+        .empty-cart h3 {
+            font-size: 22px;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+        .empty-cart p {
+            margin-bottom: 30px;
+            font-size: 15px;
+        }
+        .empty-cart .btn {
+            padding: 10px 25px;
+            background-color: var(--tea-green);
+            color: var(--white);
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+        .empty-cart .btn:hover {
+            background-color: #1b5e20;
+        }
+        /* 购物车列表 */
+        .cart-list {
+            max-width: 1200px;
+            margin: 0 auto;
+            border: 1px solid var(--border-gray);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            display: none;
+        }
+        .cart-header {
+            display: flex;
+            background-color: var(--gray);
+            padding: 15px 20px;
+            font-weight: bold;
+            color: var(--dark);
+            font-size: 15px;
+        }
+        .cart-header .col1 {
+            width: 50%;
+        }
+        .cart-header .col2, .cart-header .col3, .cart-header .col4, .cart-header .col5 {
+            width: 12.5%;
+            text-align: center;
+        }
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-gray);
+            transition: 0.3s;
+        }
+        .cart-item:hover {
+            background-color: rgba(46, 125, 50, 0.02);
+        }
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        .cart-item .col1 {
+            width: 50%;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .cart-item-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 5px;
+            overflow: hidden;
+            border: 1px solid var(--border-gray);
+        }
+        .cart-item-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .cart-item-name {
+            color: var(--dark);
+            font-size: 15px;
+            line-height: 1.5;
+            max-width: 250px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .cart-item-spec {
+            color: var(--light-gray);
+            font-size: 13px;
+        }
+        .cart-item .col2, .cart-item .col3, .cart-item .col4, .cart-item .col5 {
+            width: 12.5%;
+            text-align: center;
+            color: var(--light-gray);
+            font-size: 15px;
+        }
+        .cart-item-price {
+            color: var(--tea-green);
+            font-weight: bold;
+        }
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .quantity-btn {
+            width: 28px;
+            height: 28px;
+            border: 1px solid var(--border-gray);
+            background-color: var(--white);
+            color: var(--light-gray);
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+        .quantity-btn:hover {
+            border-color: var(--tea-green);
+            color: var(--tea-green);
+        }
+        .quantity-input {
+            width: 50px;
+            height: 28px;
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            text-align: center;
+            font-size: 14px;
+            color: var(--dark);
+            outline: none;
+        }
+        .quantity-input:focus {
+            border-color: var(--tea-green);
+        }
+        .delete-btn {
+            color: var(--red);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .delete-btn:hover {
+            color: #c62828;
+            text-decoration: underline;
+        }
+        /* 购物车结算 */
+        .cart-settlement {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: var(--gray);
+            border-radius: 10px;
+            display: none;
+        }
+        .cart-total {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            color: var(--dark);
+            font-size: 16px;
+        }
+        .total-price {
+            color: var(--red);
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .settlement-btn {
+            padding: 12px 30px;
+            background-color: var(--tea-green);
+            color: var(--white);
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .settlement-btn:hover {
+            background-color: #1b5e20;
+        }
+        .settlement-btn:disabled {
+            background-color: var(--light-gray);
+            cursor: not-allowed;
+        }
+        /* 底部样式 */
+        .footer {
+            background-color: var(--tea-green);
+            color: var(--white);
+            text-align: center;
+            padding: 30px 5%;
+        }
+        .footer p {
+            margin-bottom: 10px;
+        }
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .cart-header .col2, .cart-header .col3 {
+                display: none;
+            }
+            .cart-header .col1 {
+                width: 60%;
+            }
+            .cart-header .col4, .cart-header .col5 {
+                width: 20%;
+            }
+            .cart-item .col2, .cart-item .col3 {
+                display: none;
+            }
+            .cart-item .col1 {
+                width: 60%;
+            }
+            .cart-item .col4, .cart-item .col5 {
+                width: 20%;
+            }
+            .cart-item-name {
+                max-width: 150px;
+            }
+            .cart-settlement {
+                flex-direction: column;
+                gap: 20px;
+                align-items: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏（与所有页面互通） -->
+    <div class="navbar">
+        <div class="logo">信阳毛尖</div>
+        <div class="nav-links">
+            <a href="首页.html" >首页</a>
+            <a href="详情.html" >商品详情</a>
+            <a href="品牌介绍.html" >品牌介绍</a>
+            <a href="联系我们.html" >联系我们</a>
+            <a href="购物车.html" class="active" onclick="location.href='购物车.htm'">购物车</a>
+        </div>
+        <div class="cart" onclick="location.href='购物车.html'">
+            🛒 购物车
+            <span class="cart-badge" id="cartBadge">0</span>
+        </div>
+    </div>
+
+    <!-- 购物车主体 -->
+    <section class="cart-container">
+        <h2 class="cart-title">我的购物车</h2>
+
+        <!-- 空购物车状态 -->
+        <div class="empty-cart" id="emptyCart">
+            <i>🛒</i>
+            <h3>您的购物车还是空的哦~</h3>
+            <p>快去挑选心仪的信阳毛尖吧！</p>
+            <a href="详情.html"class="btn">去选购</a>
+        </div>
+
+        <!-- 购物车列表（有商品时显示） -->
+        <div class="cart-list" id="cartList">
+            <div class="cart-header">
+                <div class="col1">商品信息</div>
+                <div class="col2">单价</div>
+                <div class="col3">数量</div>
+                <div class="col4">小计</div>
+                <div class="col5">操作</div>
+            </div>
+            <div class="cart-item" id="cartItem1">
+                <div class="col1">
+                    <div class="cart-item-img">
+                        <img src="" alt="信阳毛尖明前茶">
+                    </div>
+                    <div>
+                        <div class="cart-item-name">信阳毛尖明前特级嫩芽 2026新茶</div>
+                        <div class="cart-item-spec">规格：250g/罐</div>
+                    </div>
+                </div>
+                <div class="col2"><span class="cart-item-price" data-price="198">¥198.00</span></div>
+                <div class="col3">
+                    <div class="quantity-control">
+                        <button class="quantity-btn minus-btn" onclick="changeQuantity(1, -1)">-</button>
+                        <input type="number" class="quantity-input" id="quantity1" value="1" min="1" onchange="changeQuantityByInput(1)">
+                        <button class="quantity-btn plus-btn" onclick="changeQuantity(1, 1)">+</button>
+                    </div>
+                </div>
+                <div class="col4" id="subtotal1">¥198.00</div>
+                <div class="col5"><span class="delete-btn" onclick="deleteCartItem(1)">删除</span></div>
+            </div>
+        </div>
+
+        <!-- 购物车结算（有商品时显示） -->
+        <div class="cart-settlement" id="cartSettlement">
+            <div class="cart-total">
+                <span>总计：</span>
+                <span class="total-price" id="totalPrice">¥198.00</span>
+            </div>
+            <button class="settlement-btn" id="settlementBtn">去结算</button>
+        </div>
+    </section>
+
+    <!-- 底部（与所有页面统一） -->
+    <div class="footer">
+        <p>信阳毛尖官方商城 © 2025 版权所有</p>
+        <p>地址：河南省信阳市浉河区茶叶核心产区</p>
+        <p>服务热线：400-123-4567  |  联系邮箱：service@xinyangmaojian.com</p>
+        <p>ICP备案号：豫ICP备XXXXXXXX号-1</p>
+    </div>
+
+    <!-- 购物车功能JS（联动、数量修改、删除、结算） -->
+    <script>
+        // 初始化购物车数据（从localStorage获取，无数据则初始化）
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const cartBadge = document.getElementById('cartBadge');
+        const emptyCart = document.getElementById('emptyCart');
+        const cartList = document.getElementById('cartList');
+        const cartSettlement = document.getElementById('cartSettlement');
+        const totalPrice = document.getElementById('totalPrice');
+
+        // 初始化购物车页面
+        function initCart() {
+            // 更新购物车角标
+            updateCartBadge();
+            // 渲染购物车商品
+            renderCartItems();
+            // 更新总计价格
+            updateTotalPrice();
+            // 控制空购物车/有商品状态显示
+            toggleCartStatus();
+        }
+
+        // 更新购物车角标
+        function updateCartBadge() {
+            cartBadge.textContent = cart.length;
+        }
+
+        // 渲染购物车商品
+        function renderCartItems() {
+            if (cart.length === 0) return;
+            // 清空现有商品（保留表头）
+            const cartItems = cartList.querySelectorAll('.cart-item');
+            cartItems.forEach(item => item.remove());
+            // 渲染商品
+            cart.forEach((item, index) => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.id = `cartItem${index + 1}`;
+                cartItem.innerHTML = `
+                    <div class="col1">
+                        <div class="cart-item-img">
+                            <img src="" alt="${item.name}">
+                        </div>
+                        <div>
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-spec">规格：${item.spec}</div>
+                        </div>
+                    </div>
+                    <div class="col2"><span class="cart-item-price" data-price="${item.price}">¥${item.price.toFixed(2)}</span></div>
+                    <div class="col3">
+                        <div class="quantity-control">
+                            <button class="quantity-btn minus-btn" onclick="changeQuantity(${index + 1}, -1)">-</button>
+                            <input type="number" class="quantity-input" id="quantity${index + 1}" value="${item.quantity}" min="1" onchange="changeQuantityByInput(${index + 1})">
+                            <button class="quantity-btn plus-btn" onclick="changeQuantity(${index + 1}, 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="col4" id="subtotal${index + 1}">¥${(item.price * item.quantity).toFixed(2)}</div>
+                    <div class="col5"><span class="delete-btn" onclick="deleteCartItem(${index + 1})">删除</span></div>
+                `;
+                cartList.appendChild(cartItem);
+            });
+        }
+
+        // 修改商品数量（点击+/-按钮）
+        function changeQuantity(index, num) {
+            const quantityInput = document.getElementById(`quantity${index}`);
+            let currentQuantity = parseInt(quantityInput.value);
+            let newQuantity = currentQuantity + num;
+            // 数量不能小于1
+            if (newQuantity < 1) newQuantity = 1;
+            quantityInput.value = newQuantity;
+            // 更新cart数组中的数量
+            cart[index - 1].quantity = newQuantity;
+            // 保存到localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+            // 更新小计和总计
+            updateSubtotal(index);
+            updateTotalPrice();
+        }
+
+        // 修改商品数量（输入框输入）
+        function changeQuantityByInput(index) {
+            const quantityInput = document.getElementById(`quantity${index}`);
+            let newQuantity = parseInt(quantityInput.value);
+            // 验证输入，确保是正整数
+            if (isNaN(newQuantity) || newQuantity < 1) {
+                newQuantity = 1;
+                quantityInput.value = 1;
+            }
+            // 更新cart数组中的数量
+            cart[index - 1].quantity = newQuantity;
+            // 保存到localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+            // 更新小计和总计
+            updateSubtotal(index);
+            updateTotalPrice();
+        }
+
+        // 更新单个商品小计
+        function updateSubtotal(index) {
+            const price = cart[index - 1].price;
+            const quantity = cart[index - 1].quantity;
+            const subtotal = price * quantity;
+            document.getElementById(`subtotal${index}`).textContent = `¥${subtotal.toFixed(2)}`;
+        }
+
+        // 更新购物车总计价格
+        function updateTotalPrice() {
+            let total = 0;
+            cart.forEach(item => {
+                total += item.price * item.quantity;
+            });
+            totalPrice.textContent = `¥${total.toFixed(2)}`;
+        }
+
+        // 删除购物车商品
+        function deleteCartItem(index) {
+            // 从cart数组中删除对应商品
+            cart.splice(index - 1, 1);
+            // 保存到localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+            // 重新初始化购物车页面
+            initCart();
+        }
+
+        // 控制空购物车和有商品状态的显示/隐藏
+        function toggleCartStatus() {
+            if (cart.length > 0) {
+                emptyCart.style.display = 'none';
+                cartList.style.display = 'block';
+                cartSettlement.style.display = 'flex';
+            } else {
+                emptyCart.style.display = 'block';
+                cartList.style.display = 'none';
+                cartSettlement.style.display = 'none';
+            }
+        }
+
+        // 页面加载时初始化购物车
+        window.onload = initCart;
+    </script>
+</body>
+</html>

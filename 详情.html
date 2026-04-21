@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品详情 - 信阳毛尖官方商城</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        :root {
+            --tea-green: #2E7D32;
+            --light-green: #81C784;
+            --white: #fff;
+            --gray: #f5f5f5;
+            --dark: #333;
+            --light-gray: #666;
+            --border-gray: #eee;
+            --red: #e53935;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background-color: var(--tea-green);
+            color: var(--white);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            margin: 0 18px;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .nav-links a:hover {
+            color: var(--light-green);
+        }
+        .nav-links a.active {
+            color: var(--light-green);
+            font-weight: bold;
+        }
+        .cart {
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            position: relative;
+        }
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--red);
+            color: var(--white);
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* 多商品详情容器 */
+        .goods-detail-container {
+            padding: 60px 5%;
+            background-color: var(--white);
+        }
+        .goods-title {
+            font-size: 28px;
+            color: var(--dark);
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        .goods-title::after {
+            content: '';
+            width: 60px;
+            height: 3px;
+            background-color: var(--tea-green);
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        /* 多商品卡片布局 */
+        .goods-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        .goods-card {
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transition: 0.3s;
+        }
+        .goods-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        .goods-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--border-gray);
+        }
+        .goods-info {
+            padding: 20px;
+        }
+        .goods-name {
+            font-size: 18px;
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .goods-desc {
+            color: var(--light-gray);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .goods-spec {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .spec-item {
+            padding: 4px 12px;
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--light-gray);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .spec-item:hover, .spec-item.active {
+            border-color: var(--tea-green);
+            color: var(--tea-green);
+        }
+        .goods-price {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .price-now {
+            font-size: 22px;
+            color: var(--tea-green);
+            font-weight: bold;
+        }
+        .price-original {
+            font-size: 14px;
+            color: #999;
+            text-decoration: line-through;
+        }
+        .goods-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 0;
+            background-color: var(--tea-green);
+            color: var(--white);
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            flex: 1;
+            text-align: center;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background-color: #1b5e20;
+        }
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--tea-green);
+            color: var(--tea-green);
+        }
+        .btn-outline:hover {
+            background-color: var(--tea-green);
+            color: var(--white);
+        }
+        /* 商品详情tab切换 */
+        .goods-tab {
+            max-width: 1200px;
+            margin: 0 auto;
+            border-top: 1px solid var(--border-gray);
+        }
+        .tab-nav {
+            display: flex;
+            border-bottom: 1px solid var(--border-gray);
+        }
+        .tab-btn {
+            padding: 15px 30px;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            color: var(--light-gray);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .tab-btn.active {
+            color: var(--tea-green);
+            border-bottom: 2px solid var(--tea-green);
+            font-weight: bold;
+        }
+        .tab-content {
+            padding: 30px;
+            color: var(--light-gray);
+            line-height: 1.8;
+            font-size: 15px;
+        }
+        .tab-panel {
+            display: none;
+        }
+        .tab-panel.active {
+            display: block;
+        }
+        /* 物流提示 */
+        .logistics-tip {
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            padding: 15px;
+            background-color: rgba(46, 125, 50, 0.05);
+            border-left: 4px solid var(--tea-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            color: var(--light-gray);
+        }
+        .logistics-tip i {
+            color: var(--tea-green);
+            font-size: 18px;
+        }
+        /* 底部样式 */
+        .footer {
+            background-color: var(--tea-green);
+            color: var(--white);
+            text-align: center;
+            padding: 30px 5%;
+        }
+        .footer p {
+            margin-bottom: 10px;
+        }
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .tab-btn {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+            .tab-content {
+                padding: 20px;
+            }
+        }
+        /* 加入购物车提示 */
+        .add-cart-toast {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            padding: 12px 20px;
+            background-color: var(--tea-green);
+            color: var(--white);
+            border-radius: 5px;
+            font-size: 14px;
+            z-index: 9999;
+            display: none;
+            animation: fadeInOut 2s ease-in-out;
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateX(100px); }
+            20% { opacity: 1; transform: translateX(0); }
+            80% { opacity: 1; transform: translateX(0); }
+            100% { opacity: 0; transform: translateX(100px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏（与所有页面互通） -->
+    <div class="navbar">
+        <div class="logo">信阳毛尖</div>
+        <div class="nav-links">
+            <a href="首页.html">首页</a>
+            <a href="详情.html" class="active">商品详情</a>
+            <a  href="品牌介绍.html">品牌介绍</a>
+            <a  href="联系我们.html">联系我们</a>
+            <a  href="购物车.html">购物车</a>
+        </div>
+        <div class="cart" onclick="location.href='cart.html'">
+            🛒 购物车
+            <span class="cart-badge" id="cartBadge">0</span>
+        </div>
+    </div>
+
+    <!-- 加入购物车提示框 -->
+    <div class="add-cart-toast" id="addCartToast">加入购物车成功！</div>
+
+    <!-- 物流提示（提升用户体验） -->
+    <div class="logistics-tip">
+        <i>⌛</i>
+        <span>正常情况下，下单后48小时内发货，偏远地区（新疆、西藏、青海）72小时内发货，可实时查看物流进度</span>
+    </div>
+
+    <!-- 多商品详情主体 -->
+    <div class="goods-detail-container">
+        <h2 class="goods-title">信阳毛尖系列商品</h2>
+        
+        <!-- 多商品卡片列表 -->
+        <div class="goods-list"><!-- 商品1 -->
+            <div class="goods-card" data-id="1" data-name="明前特级信阳毛尖（2026新茶）" data-price="88.00" data-img="">
+                <img src="imges/产品1.png" alt="明前特级信阳毛尖" class="goods-img">
+                <div class="goods-info">
+                  <h3 class="goods-name">明前特级信阳毛尖（2026新茶）</h3>
+                    <p class="goods-desc">原产地直供，嫩芽采摘，汤色嫩绿明亮，香气清高有兰花香，鲜爽回甘，无苦涩味。</p>
+                    <div class="goods-spec">
+                        <div class="spec-item active" data-spec="50g（尝鲜装）" data-spec-price="88.00">50g（尝鲜装）</div>
+                        <div class="spec-item" data-spec="250g（常规装）" data-spec-price="398.00">250g（常规装）</div>
+                        <div class="spec-item" data-spec="500g（家庭装）" data-spec-price="758.00">500g（家庭装）</div>
+                    </div>
+                    <div class="goods-price">
+                        <span class="price-now" id="price1">¥88.00</span>
+                        <span class="price-original">¥128.00</span>
+                    </div>
+                    <div class="goods-actions">
+                        <a href="#" class="btn add-cart" data-id="1">加入购物车</a>
+                        <a href="#" class="btn btn-outline">立即购买</a>
+                    </div>
+              </div>
+          </div>
+
+            <!-- 商品2 -->
+            <div class="goods-card" data-id="2" data-name="雨前一级信阳毛尖（2026新茶）" data-price="58.00" data-img="">
+                <img src="imges/产品4.png" alt="雨前一级信阳毛尖" class="goods-img">
+                <div class="goods-info">
+                  <h3 class="goods-name">雨前一级信阳毛尖（2026新茶）</h3>
+                    <p class="goods-desc">浉河核心产区，手工炒制，条索细圆挺直，白毫显露，滋味醇厚，耐泡度高，性价比优选。</p>
+                    <div class="goods-spec">
+                        <div class="spec-item active" data-spec="50g（尝鲜装）" data-spec-price="58.00">50g（尝鲜装）</div>
+                        <div class="spec-item" data-spec="250g（常规装）" data-spec-price="268.00">250g（常规装）</div>
+                        <div class="spec-item" data-spec="500g（家庭装）" data-spec-price="518.00">500g（家庭装）</div>
+                    </div>
+                    <div class="goods-price">
+                        <span class="price-now" id="price2">¥58.00</span>
+                        <span class="price-original">¥88.00</span>
+                    </div>
+                    <div class="goods-actions">
+                        <a href="#" class="btn add-cart" data-id="2">加入购物车</a>
+                        <a href="#" class="btn btn-outline">立即购买</a>
+                    </div>
+              </div>
+          </div>
+
+            <!-- 商品3 -->
+            <div class="goods-card" data-id="3" data-name="信阳毛尖礼盒装（高端送礼）" data-price="198.00" data-img="">
+                <img src="imges/产品3 .png" alt="信阳毛尖礼盒装" class="goods-img">
+                <div class="goods-info">
+                  <h3 class="goods-name">信阳毛尖礼盒装（高端送礼）</h3>
+                    <p class="goods-desc">精选明前嫩芽，高端礼盒包装，自带手提袋，适合走亲访友、商务馈赠，品质与颜值兼具。</p>
+                    <div class="goods-spec">
+                        <div class="spec-item active" data-spec="200g（简约礼盒）" data-spec-price="198.00">200g（简约礼盒）</div>
+                        <div class="spec-item" data-spec="400g（豪华礼盒）" data-spec-price="368.00">400g（豪华礼盒）</div>
+                        <div class="spec-item" data-spec="定制礼盒（联系客服）" data-spec-price="598.00">定制礼盒（联系客服）</div>
+                    </div>
+                    <div class="goods-price">
+                        <span class="price-now" id="price3">¥198.00</span>
+                        <span class="price-original">¥268.00</span>
+                    </div>
+                    <div class="goods-actions">
+                        <a href="#" class="btn add-cart" data-id="3">加入购物车</a>
+                        <a href="#" class="btn btn-outline">立即购买</a>
+                    </div>
+              </div>
+          </div>
+
+            <!-- 商品4 -->
+            <div class="goods-card" data-id="4" data-name="散装信阳毛尖（实惠装）" data-price="99.00" data-img="">
+                <img src="imges/产品4.1.png" alt="散装信阳毛尖" class="goods-img">
+                <div class="goods-info">
+                  <h3 class="goods-name">散装信阳毛尖（实惠装）</h3>
+                    <p class="goods-desc">一级品质，散装称重，无多余包装，适合日常自饮、办公用茶，密封保存锁住新鲜口感。</p>
+                    <div class="goods-spec">
+                        <div class="spec-item active" data-spec="1000g（大包装）" data-spec-price="99.00">1000g（大包装）</div>
+                        <div class="spec-item" data-spec="2000g（批发装）" data-spec-price="188.00">2000g（批发装）</div>
+                        <div class="spec-item" data-spec="5000g（大宗采购）" data-spec-price="458.00">5000g（大宗采购）</div>
+                    </div>
+                    <div class="goods-price">
+                        <span class="price-now" id="price4">¥99.00</span>
+                        <span class="price-original">¥159.00</span>
+                    </div>
+                    <div class="goods-actions">
+                        <a href="#" class="btn add-cart" data-id="4">加入购物车</a>
+                        <a href="#" class="btn btn-outline">立即购买</a>
+                    </div>
+              </div>
+          </div>
+        </div>
+
+        <!-- 商品详情tab切换（通用说明） -->
+        <div class="goods-tab">
+            <div class="tab-nav">
+                <button class="tab-btn active" data-tab="intro">商品介绍</button>
+                <button class="tab-btn" data-tab="storage">储存方法</button>
+                <button class="tab-btn" data-tab="aftersale">售后保障</button>
+                <button class="tab-btn" data-tab="faq">常见问题</button>
+            </div>
+            <div class="tab-content">
+                <div class="tab-panel active" id="intro">
+                    本店所有信阳毛尖均来自河南省信阳市浉河区核心产区，正宗原产地直供，拒绝中间商，保证茶叶新鲜度与品质。所有茶叶均经过人工筛选、手工炒制，保留信阳毛尖独有的鲜爽口感与兰花香。不同规格商品对应不同需求，无论是日常自饮、办公用茶，还是节日送礼、大宗采购，均可找到合适的选择，支持专业机构检测，假一赔十。同时我们提供详细的使用引导，确保每一位消费者都能喝到正宗的信阳毛尖。
+                </div>
+                <div class="tab-panel" id="storage">
+                    信阳毛尖属于绿茶，保鲜要求较高，储存方法如下：1. 密封保存：将茶叶放入密封罐或密封袋中，排出空气，防止氧化；2. 阴凉干燥：放置在阴凉、干燥、通风处，避免阳光直射和高温潮湿环境；3. 冷藏保存：建议将密封好的茶叶放入冰箱冷藏（温度0-5℃），可延长保质期至12个月，饮用前提前10分钟取出，避免温差过大影响口感；4. 避免串味：远离大蒜、洋葱、香料等有刺激性气味的食物，防止茶叶串味。
+                </div>
+                <div class="tab-panel" id="aftersale">
+                    售后保障政策：1. 退换货：收到茶叶后7天内，保持茶叶密封、无破损、不影响二次销售，可申请退换货，质量问题来回运费由我方承担，非质量问题运费由买家承担；2. 质量保障：若收到茶叶存在品质问题（如发霉、变质、掺杂），可凭照片联系客服，全额退款并补发；3. 客服响应：线上客服9:00-21:00在线，可随时咨询商品相关问题、物流进度及售后事宜；4. 线下支持：支持线下体验店自提，自提可享受额外9.5折优惠，自提地址：河南省信阳市浉河区茶叶核心产区。
+                </div>
+                <div class="tab-panel" id="faq">
+                    1. 如何辨别信阳毛尖的真假？答：正宗信阳毛尖外形细、圆、光、直，多白毫；汤色嫩绿明亮，香气清高有兰花香；滋味鲜爽回甘，无苦涩味。本店所有茶叶均为原产地直供，支持专业机构检测，假一赔十。<br/>
+                    2. 新茶和陈茶有什么区别？答：新茶色泽嫩绿，香气清新，口感鲜爽；陈茶色泽暗沉，香气变淡，口感偏涩。本店均为2026年新茶，保证新鲜度。<br/>
+                    3. 下单后多久能发货？答：正常情况下，下单后48小时内发货，偏远地区（新疆、西藏、青海）72小时内发货，节假日发货时间会顺延，具体以订单详情通知为准。<br/>
+                    4. 支持定制礼盒吗？答：支持，可联系客服定制礼盒样式、印字，定制周期为3-5个工作日。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部（与所有页面统一） -->
+    <div class="footer">
+        <p>信阳毛尖官方商城 © 2025 版权所有</p>
+        <p>地址：河南省信阳市浉河区茶叶核心产区</p>
+        <p>服务热线：400-123-4567  |  联系邮箱：service@xinyangmaojian.com</p>
+        <p>ICP备案号：豫ICP备XXXXXXXX号-1</p>
+    </div>
+
+    <!-- tab切换JS -->
+    <script>
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabPanels = document.querySelectorAll('.tab-panel');
+        
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 移除所有active类
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabPanels.forEach(panel => panel.classList.remove('active'));
+                // 给当前点击的按钮和对应面板添加active类
+                btn.classList.add('active');
+                const tabId = btn.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // 规格选择JS
+        const specItems = document.querySelectorAll('.spec-item');
+        specItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // 移除同商品下其他规格的active类
+                const parent = item.parentElement;
+                const goodsCard = parent.closest('.goods-card');
+                const goodsId = goodsCard.getAttribute('data-id');
+                const priceNow = document.getElementById('price' + goodsId);
+                // 更新商品价格和卡片数据
+                const specPrice = item.getAttribute('data-spec-price');
+                priceNow.textContent = '¥' + specPrice;
+                goodsCard.setAttribute('data-price', specPrice);
+                // 切换active类
+                parent.querySelectorAll('.spec-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+
+        // 加入购物车JS（本地存储，实现联动）
+        const addCartBtns = document.querySelectorAll('.add-cart');
+        const cartBadge = document.getElementById('cartBadge');
+        const addCartToast = document.getElementById('addCartToast');
+// 页面刷新时清空购物车（核心优化：刷新归零）
+localStorage.removeItem('cart');
+
+        // 初始化购物车数量
+        function updateCartBadge() {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cartBadge.textContent = cart.length;
+        }
+        updateCartBadge();
+
+        // 加入购物车逻辑
+        addCartBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const goodsCard = btn.closest('.goods-card');
+                // 获取商品信息
+                const goodsInfo = {
+                    id: goodsCard.getAttribute('data-id'),
+                    name: goodsCard.getAttribute('data-name'),
+                    price: goodsCard.getAttribute('data-price'),
+                    img: goodsCard.getAttribute('data-img'),
+                    spec: goodsCard.querySelector('.spec-item.active').getAttribute('data-spec'),
+                    count: 1
+                };
+                // 获取本地存储的购物车数据
+                let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                // 判断商品是否已在购物车，已存在则增加数量，否则添加新商品
+                const existingGoods = cart.find(item => item.id === goodsInfo.id && item.spec === goodsInfo.spec);
+                if (existingGoods) {
+                    existingGoods.count += 1;
+                } else {
+                    cart.push(goodsInfo);
+                }
+                // 保存到本地存储
+                localStorage.setItem('cart', JSON.stringify(cart));
+                // 更新购物车数量徽章
+                updateCartBadge();
+                // 显示提示框
+                addCartToast.style.display = 'block';
+                setTimeout(() => {
+                    addCartToast.style.display = 'none';
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>
